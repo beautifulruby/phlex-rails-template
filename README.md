@@ -1,35 +1,59 @@
 # Phlex::Rails::Template
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/phlex/rails/template`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Rails template handler that lets you write Phlex components directly in `.html.rb` view files.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem 'phlex-rails-template'
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+And then execute:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle install
+```
+
+## Setup
+
+Create a base Phlex component class:
+
+```ruby
+# app/views/views/base.rb
+module Views
+  class Base < Phlex::HTML
+  end
+end
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+Create view files with the `.html.rb` extension:
 
-## Development
+```ruby
+# app/views/posts/show.html.rb
+h1 { @post.title }
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+div(class: "content") do
+  p { @post.body }
+end
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+In your controller:
 
-## Contributing
+```ruby
+class PostsController < ApplicationController
+  def show
+    @post = Post.find(params[:id])
+    # Renders app/views/posts/show.html.rb automatically
+  end
+end
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/phlex-rails-template.
+Controller instance variables are automatically available in your templates.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
