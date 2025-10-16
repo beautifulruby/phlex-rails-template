@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 require_relative "template/version"
+require_relative "template/registry"
 require_relative "template/handler"
 
 module Phlex
@@ -36,37 +39,21 @@ module Phlex
           end
         end
         
-        def build(&template_block)
-          klass = Class.new(component_class) do
-            define_method(:view_template, &template_block)
-          end
-          
-          @component = create_component(klass)
+        def build(component_class, &template_block)
+          @component = component_class.new
           assign_variables
           component
         end
       end
       
-      @handlers = {}
+      @registry = Registry.new
       
       class << self
-        def register(handler_name, configurator_class = nil, &block)
-          if block_given?
-            @handlers[handler_name] = Class.new(Configurator, &block)
-          else
-            @handlers[handler_name] = configurator_class
-          end
-        end
+        extend Forwardable
         
-        def configurator_class_for(handler_name)
-          @handlers[handler_name] || Configurator
-        end
+        attr_reader :registry
         
-        def build(view_context, handler_name, &template_block)
-          configurator_class = configurator_class_for(handler_name)
-          configurator = configurator_class.new(view_context)
-          configurator.build(&template_block)
-        end
+        def_delegators :registry, :register, :build
       end
     end
   end

@@ -4,28 +4,11 @@ A Rails template handler that lets you write Phlex components directly in `.html
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Run the following command from the root of your Rails project:
 
 ```ruby
-gem 'phlex-rails-template'
-```
-
-And then execute:
-
-```bash
-bundle install
-```
-
-## Setup
-
-Create a base Phlex component class:
-
-```ruby
-# app/views/views/base.rb
-module Views
-  class Base < Phlex::HTML
-  end
-end
+# Make sure you've installed phlex-rails
+bundle add 'phlex-rails-template'
 ```
 
 ## Usage
@@ -65,12 +48,12 @@ Phlex::Rails::Template.register :rb do
   def component_class
     ApplicationComponent
   end
-  
+
   # Override to instantiate the component with custom arguments
   def create_component(component_class)
     component_class.new(view_context.session, request: view_context.request)
   end
-  
+
   # Override to customize how controller variables are assigned
   def assign_variables
     view_context.assigns.each do |key, value|
