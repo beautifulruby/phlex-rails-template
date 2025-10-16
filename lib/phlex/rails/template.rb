@@ -7,6 +7,12 @@ module Phlex
   module Rails
     module Template
       class Error < StandardError; end
+      
+      @base_class = "::Views::Base"
+      
+      class << self
+        attr_accessor :base_class
+      end
     end
   end
 end

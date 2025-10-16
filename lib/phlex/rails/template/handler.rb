@@ -9,7 +9,7 @@ module Phlex
 
           <<~RUBY
             # Define an anonymous subclass of your Phlex base
-            __phlex_class__ = Class.new(::Views::Base) do
+            __phlex_class__ = Class.new(#{Phlex::Rails::Template.base_class}) do
               def view_template
                 #{src}
               end

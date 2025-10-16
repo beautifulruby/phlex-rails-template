@@ -54,20 +54,51 @@ RSpec.describe "Rails integration" do
     FileUtils.rm_rf(File.expand_path("../fixtures", __FILE__))
   end
 
-  let(:controller) do
-    TestController.new.tap do
-      it.request = ActionDispatch::TestRequest.create
-      it.response = ActionDispatch::TestResponse.new
-    end
-  end
-
   it "renders implicit view" do
+    controller = TestController.new
+    controller.request = ActionDispatch::TestRequest.create
+    controller.response = ActionDispatch::TestResponse.new
+
     controller.process(:implicit)
     expect(controller.response.body).to include("<h1>Hello</h1>")
   end
 
   it "renders explicit view" do
+    controller = TestController.new
+    controller.request = ActionDispatch::TestRequest.create
+    controller.response = ActionDispatch::TestResponse.new
+
     controller.process(:explicit)
     expect(controller.response.body).to include("<div>World</div>")
+  end
+
+  it "allows custom base_class configuration" do
+    # Create custom base class
+    class CustomBase < Phlex::HTML
+      include Phlex::Rails::Helpers
+    end
+
+    # Configure handler to use custom base
+    original_base = Phlex::Rails::Template.base_class
+    Phlex::Rails::Template.base_class = "CustomBase"
+
+    # Create view that uses custom base
+    File.write(File.join(@view_path, "test", "custom.html.rb"), 'p { "Custom" }')
+
+    # Create controller action
+    TestController.class_eval do
+      def custom
+        render "test/custom"
+      end
+    end
+
+    controller = TestController.new
+    controller.request = ActionDispatch::TestRequest.create
+    controller.response = ActionDispatch::TestResponse.new
+
+    controller.process(:custom)
+    expect(controller.response.body).to include("<p>Custom</p>")
+  ensure
+    Phlex::Rails::Template.base_class = original_base
   end
 end

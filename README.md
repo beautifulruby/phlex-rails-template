@@ -54,6 +54,15 @@ end
 
 Controller instance variables are automatically available in your templates.
 
+## Configuration
+
+By default, templates inherit from `Views::Base`. You can configure a different base class:
+
+```ruby
+# config/initializers/phlex_rails_template.rb
+Phlex::Rails::Template.base_class = "ApplicationComponent"
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
