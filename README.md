@@ -56,11 +56,46 @@ Controller instance variables are automatically available in your templates.
 
 ## Configuration
 
-By default, templates inherit from `Views::Base`. You can configure a different base class:
+You can customize how components are instantiated and how variables are assigned by passing a block to `register`:
 
 ```ruby
 # config/initializers/phlex_rails_template.rb
-Phlex::Rails::Template.base_class = "ApplicationComponent"
+Phlex::Rails::Template.register :rb do
+  # Override the base component class
+  def component_class
+    ApplicationComponent
+  end
+  
+  # Override to instantiate the component with custom arguments
+  def create_component(component_class)
+    component_class.new(view_context.session, request: view_context.request)
+  end
+  
+  # Override to customize how controller variables are assigned
+  def assign_variables
+    view_context.assigns.each do |key, value|
+      component.instance_variable_set(:"@#{key}", "PREFIX: #{value}")
+    end
+  end
+end
+```
+
+Or you can pass a configurator class directly:
+
+```ruby
+class CustomConfigurator < Phlex::Rails::Template::Configurator
+  def component_class
+    ApplicationComponent
+  end
+end
+
+Phlex::Rails::Template.register :rb, CustomConfigurator
+```
+
+You can also register additional template handlers with different configurators:
+
+```ruby
+Phlex::Rails::Template.register :customrb, MyCustomConfigurator
 ```
 
 ## License

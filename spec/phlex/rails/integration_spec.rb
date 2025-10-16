@@ -72,23 +72,27 @@ RSpec.describe "Rails integration" do
     expect(controller.response.body).to include("<div>World</div>")
   end
 
-  it "allows custom base_class configuration" do
-    # Create custom base class
-    class CustomBase < Phlex::HTML
-      include Phlex::Rails::Helpers
+  it "allows custom configurator class" do
+    # Create custom configurator
+    class PrefixConfigurator < Phlex::Rails::Template::Configurator
+      def assign_variables
+        view_context.assigns.each do |key, value|
+          component.instance_variable_set(:"@#{key}", "PREFIX: #{value}")
+        end
+      end
     end
+    
+    # Register custom configurator for :rb handler
+    Phlex::Rails::Template.register :rb, PrefixConfigurator
 
-    # Configure handler to use custom base
-    original_base = Phlex::Rails::Template.base_class
-    Phlex::Rails::Template.base_class = "CustomBase"
-
-    # Create view that uses custom base
-    File.write(File.join(@view_path, "test", "custom.html.rb"), 'p { "Custom" }')
+    # Create view
+    File.write(File.join(@view_path, "test", "prefixed.html.rb"), 'span { @message }')
 
     # Create controller action
     TestController.class_eval do
-      def custom
-        render "test/custom"
+      def prefixed
+        @message = "Test"
+        render "test/prefixed"
       end
     end
 
@@ -96,9 +100,42 @@ RSpec.describe "Rails integration" do
     controller.request = ActionDispatch::TestRequest.create
     controller.response = ActionDispatch::TestResponse.new
 
-    controller.process(:custom)
-    expect(controller.response.body).to include("<p>Custom</p>")
+    controller.process(:prefixed)
+    expect(controller.response.body).to include("<span>PREFIX: Test</span>")
   ensure
-    Phlex::Rails::Template.base_class = original_base
+    # Reset to default configurator
+    Phlex::Rails::Template.register :rb, Phlex::Rails::Template::Configurator
+  end
+
+  it "allows register with block" do
+    # Register with block
+    Phlex::Rails::Template.register :rb do
+      def assign_variables
+        view_context.assigns.each do |key, value|
+          component.instance_variable_set(:"@#{key}", "BLOCK: #{value}")
+        end
+      end
+    end
+
+    # Create view
+    File.write(File.join(@view_path, "test", "blocked.html.rb"), 'span { @message }')
+
+    # Create controller action
+    TestController.class_eval do
+      def blocked
+        @message = "Test"
+        render "test/blocked"
+      end
+    end
+
+    controller = TestController.new
+    controller.request = ActionDispatch::TestRequest.create
+    controller.response = ActionDispatch::TestResponse.new
+
+    controller.process(:blocked)
+    expect(controller.response.body).to include("<span>BLOCK: Test</span>")
+  ensure
+    # Reset to default configurator
+    Phlex::Rails::Template.register :rb, Phlex::Rails::Template::Configurator
   end
 end
