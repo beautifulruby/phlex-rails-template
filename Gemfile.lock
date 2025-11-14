@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    phlex-rails-template (0.1.0)
+    phlex-rails-template (0.1.1)
       actionview (>= 6.0)
       phlex (>= 1.0)
       railties (>= 6.0)
