@@ -39,7 +39,7 @@ module Phlex
           end
         end
         
-        def build(component_class, &template_block)
+        def build(component_class)
           @component = component_class.new
           assign_variables
           component

@@ -6,7 +6,6 @@ module Phlex
       class Registry
         def initialize
           @handlers = {}
-          @component_classes = {}
         end
         
         def register(handler_name, configurator_class = nil, &block)
@@ -21,16 +20,15 @@ module Phlex
           @handlers[handler_name] || Configurator
         end
         
-        def build(view_context, handler_name, cache_key, &template_block)
+        def build(view_context, handler_name, &template_block)
           configurator_class = configurator_class_for(handler_name)
           configurator = configurator_class.new(view_context)
           
-          # Cache the component class per template
-          component_class = @component_classes[cache_key] ||= Class.new(configurator.component_class) do
+          component_class = Class.new(configurator.component_class) do
             define_method(:view_template, &template_block)
           end
           
-          configurator.build(component_class, &template_block)
+          configurator.build(component_class)
         end
       end
     end

@@ -6,10 +6,9 @@ module Phlex
       class Handler
         def self.call(template, source = nil)
           src = source || template.source
-          cache_key = template.identifier
 
           <<~RUBY
-            __component__ = Phlex::Rails::Template.build(self, :rb, #{cache_key.inspect}) do
+            __component__ = Phlex::Rails::Template.build(self, :rb) do
               #{src}
             end
             __component__.render_in(self).to_s
