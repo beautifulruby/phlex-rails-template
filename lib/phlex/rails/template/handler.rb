@@ -8,7 +8,7 @@ module Phlex
           src = source || template.source
 
           <<~RUBY
-            __component__ = Phlex::Rails::Template.build(self, :rb) do
+            __component__ = Phlex::Rails::Template.build(self, :phlex) do
               #{src}
             end
             __component__.render_in(self).to_s

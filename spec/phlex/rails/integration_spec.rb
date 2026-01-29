@@ -82,8 +82,8 @@ RSpec.describe "Rails integration" do
       end
     end
     
-    # Register custom configurator for :rb handler
-    Phlex::Rails::Template.register :rb, PrefixConfigurator
+    # Register custom configurator for :phlex handler
+    Phlex::Rails::Template.register :phlex, PrefixConfigurator
 
     # Create view
     File.write(File.join(@view_path, "test", "prefixed.html.rb"), 'span { @message }')
@@ -104,12 +104,12 @@ RSpec.describe "Rails integration" do
     expect(controller.response.body).to include("<span>PREFIX: Test</span>")
   ensure
     # Reset to default configurator
-    Phlex::Rails::Template.register :rb, Phlex::Rails::Template::Configurator
+    Phlex::Rails::Template.register :phlex, Phlex::Rails::Template::Configurator
   end
 
   it "allows register with block" do
     # Register with block
-    Phlex::Rails::Template.register :rb do
+    Phlex::Rails::Template.register :phlex do
       def assign_variables
         view_context.assigns.each do |key, value|
           component.instance_variable_set(:"@#{key}", "BLOCK: #{value}")
@@ -136,6 +136,6 @@ RSpec.describe "Rails integration" do
     expect(controller.response.body).to include("<span>BLOCK: Test</span>")
   ensure
     # Reset to default configurator
-    Phlex::Rails::Template.register :rb, Phlex::Rails::Template::Configurator
+    Phlex::Rails::Template.register :phlex, Phlex::Rails::Template::Configurator
   end
 end
