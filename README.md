@@ -1,6 +1,6 @@
 # Phlex::Rails::Template
 
-A Rails template handler that lets you write Phlex components directly in `.html.rb` view files.
+A Rails template handler that lets you write Phlex components directly in `.html.phlex` view files.
 
 ## Installation
 
@@ -13,10 +13,10 @@ bundle add 'phlex-rails-template'
 
 ## Usage
 
-Create view files with the `.html.rb` extension:
+Create view files with the `.html.phlex` extension:
 
 ```ruby
-# app/views/posts/show.html.rb
+# app/views/posts/show.html.phlex
 h1 { @post.title }
 
 div(class: "content") do
@@ -30,7 +30,7 @@ In your controller:
 class PostsController < ApplicationController
   def show
     @post = Post.find(params[:id])
-    # Renders app/views/posts/show.html.rb automatically
+    # Renders app/views/posts/show.html.phlex automatically
   end
 end
 ```
@@ -43,7 +43,7 @@ You can customize how components are instantiated and how variables are assigned
 
 ```ruby
 # config/initializers/phlex_rails_template.rb
-Phlex::Rails::Template.register :rb do
+Phlex::Rails::Template.register :phlex do
   # Override the base component class
   def component_class
     ApplicationComponent
@@ -72,7 +72,7 @@ class CustomConfigurator < Phlex::Rails::Template::Configurator
   end
 end
 
-Phlex::Rails::Template.register :rb, CustomConfigurator
+Phlex::Rails::Template.register :phlex, CustomConfigurator
 ```
 
 You can also register additional template handlers with different configurators:

@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["bradgessler@gmail.com"]
 
   spec.summary = "Rails template handler for Phlex components"
-  spec.description = "Write Phlex components directly in .html.rb view files"
+  spec.description = "Write Phlex components directly in .html.phlex view files"
   spec.homepage = "https://github.com/beautifulruby/phlex-rails-template"
   spec.required_ruby_version = ">= 3.1.0"
 

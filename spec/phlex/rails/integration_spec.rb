@@ -19,7 +19,7 @@ RSpec.describe "Rails integration" do
     TestApp.initialize!
 
     # Register the handler
-    ActionView::Template.register_template_handler :rb, Phlex::Rails::Template::Handler
+    ActionView::Template.register_template_handler :phlex, Phlex::Rails::Template::Handler
 
     # Base Phlex component
     module Views
@@ -44,8 +44,8 @@ RSpec.describe "Rails integration" do
     @view_path = File.expand_path("../fixtures/views", __FILE__)
     FileUtils.mkdir_p(File.join(@view_path, "test"))
 
-    File.write(File.join(@view_path, "test", "implicit.html.rb"), 'h1 { @message }')
-    File.write(File.join(@view_path, "test", "explicit.html.rb"), 'div { @message }')
+    File.write(File.join(@view_path, "test", "implicit.html.phlex"), 'h1 { @message }')
+    File.write(File.join(@view_path, "test", "explicit.html.phlex"), 'div { @message }')
 
     TestController.prepend_view_path(@view_path)
   end
@@ -86,7 +86,7 @@ RSpec.describe "Rails integration" do
     Phlex::Rails::Template.register :phlex, PrefixConfigurator
 
     # Create view
-    File.write(File.join(@view_path, "test", "prefixed.html.rb"), 'span { @message }')
+    File.write(File.join(@view_path, "test", "prefixed.html.phlex"), 'span { @message }')
 
     # Create controller action
     TestController.class_eval do
@@ -118,7 +118,7 @@ RSpec.describe "Rails integration" do
     end
 
     # Create view
-    File.write(File.join(@view_path, "test", "blocked.html.rb"), 'span { @message }')
+    File.write(File.join(@view_path, "test", "blocked.html.phlex"), 'span { @message }')
 
     # Create controller action
     TestController.class_eval do
